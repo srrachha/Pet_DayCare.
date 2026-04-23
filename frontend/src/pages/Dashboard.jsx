@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Plus, Clock, CheckCircle, Dog, Calendar, Search, AlertCircle, Info, DollarSign, Activity, Heart, ShieldAlert } from 'lucide-react';
 import StatsCard from '../components/StatsCard';
 import PetList from '../components/PetList';
@@ -112,10 +113,7 @@ const Dashboard = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(`/api/pets/${editPet.id}`, editPet, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(`/pets/${editPet.id}`, editPet);
       addToast('Pet profile updated!');
       setShowEditPetModal(false);
       fetchData();
