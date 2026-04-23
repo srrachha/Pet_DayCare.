@@ -24,21 +24,19 @@
     - Use `pm2` or a similar process manager to keep the server running.
     - Serve the `frontend/dist` static files through the Express server or an Nginx proxy.
 
-## 4. Cloud Deployment (Render/Railway)
-- **Web Service (Backend):**
-    - Connect GitHub repo.
-    - Root Directory: `backend`
-    - Build Command: `npm install`
-    - Start Command: `node server.js`
-- **Static Site (Frontend):**
-    - Root Directory: `frontend`
-    - Build Command: `npm run build`
-    - Publish Directory: `dist`
-- **Database:**
-    - Since SQLite is file-based, ensure a persistent disk is attached to the backend service.
+## 4. Unified Deployment (Recommended)
+1. **GitHub Repository**: Ensure your latest code is pushed to GitHub.
+2. **Platform (Render/Railway)**:
+    - **Service Type**: Web Service (Node).
+    - **Root Directory**: `.` (The project root).
+    - **Build Command**: `npm run build`
+    - **Start Command**: `npm start`
+3. **Environment Variables**:
+    - `JWT_SECRET`: Your production secret.
+    - `PORT`: `5000` (or leave blank for platform default).
+4. **Important Note (SQLite)**: On free tiers (like Render Free), data in SQLite will be reset on every restart. For production, consider using a managed database (MongoDB, Postgres).
 
 ## 5. Security Checklist
 - [ ] Change default `JWT_SECRET`.
-- [ ] Disable directory listing on server.
 - [ ] Set `NODE_ENV=production`.
 - [ ] Use HTTPS for all communications.

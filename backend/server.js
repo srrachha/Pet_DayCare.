@@ -38,8 +38,8 @@ app.use('/api/reviews', reviewRoutes);
 const distPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(distPath));
 
-// Catch-all route to serve Frontend index.html
-app.use((req, res) => {
+// Catch-all route to serve Frontend index.html for SPA routing
+app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
