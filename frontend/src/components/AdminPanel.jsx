@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+import { Users, Trash2, DollarSign, Activity, ShieldAlert, UserCheck } from 'lucide-react';
 import api from '../api';
 
 const AdminPanel = ({ addToast }) => {

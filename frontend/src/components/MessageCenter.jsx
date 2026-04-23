@@ -1,3 +1,5 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Send, User, MessageSquare, X } from 'lucide-react';
 import api from '../api';
 
 const MessageCenter = ({ currentUser, isAdmin }) => {
