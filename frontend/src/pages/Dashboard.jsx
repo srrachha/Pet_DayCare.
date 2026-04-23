@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Plus, Clock, CheckCircle, Dog, Calendar, Search, AlertCircle, Info, DollarSign, Activity, Heart, ShieldAlert } from 'lucide-react';
 import StatsCard from '../components/StatsCard';
 import PetList from '../components/PetList';
@@ -98,11 +96,8 @@ const Dashboard = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('/api/bookings', newBooking, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      addToast('Stay booked successfully!');
+      await api.post('/bookings', newBooking);
+      addToast('Booking successful!');
       setShowBookingModal(false);
       setNewBooking({ pet_id: '', start_date: '', end_date: '', service_type: 'Daycare' });
       fetchData();
@@ -132,12 +127,9 @@ const Dashboard = () => {
   };
 
   const handleDeletePet = async (id) => {
-    if (!window.confirm('Are you sure you want to remove this pet?')) return;
+    if (!window.confirm('Are you sure you want to remove this pet profile?')) return;
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`/api/pets/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/pets/${id}`);
       addToast('Pet removed from system');
       fetchData();
     } catch (err) {
@@ -147,10 +139,7 @@ const Dashboard = () => {
 
   const handleUpdateBookingStatus = async (id, status) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`/api/bookings/${id}/status`, { status }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.patch(`/bookings/${id}/status`, { status });
       addToast(`Booking ${status}`);
       fetchData();
     } catch (err) {
@@ -162,10 +151,7 @@ const Dashboard = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(`/api/bookings/${selectedBooking.id}/status_update`, { status_update: statusUpdate }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post(`/bookings/${selectedBooking.id}/status_update`, { status_update: statusUpdate });
       addToast('Activity update posted');
       setShowStatusModal(false);
       setStatusUpdate('');
@@ -179,10 +165,7 @@ const Dashboard = () => {
 
   const fetchHistory = async (bookingId) => {
     try {
-      const token = localStorage.getItem('token');
-      const { data } = await axios.get(`/api/bookings/${bookingId}/history`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const { data } = await api.get(`/bookings/${bookingId}/history`);
       setHistory(data);
       setShowHistoryModal(true);
     } catch (err) {
@@ -194,16 +177,11 @@ const Dashboard = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
       // Step 1: Create Payment Intent
-      const { data } = await axios.post('/api/payments/create-intent', { booking_id: selectedBooking.id }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const { data } = await api.post('/payments/create-intent', { booking_id: selectedBooking.id });
       
       // Step 2: Confirm Payment (Simulated)
-      await axios.post('/api/payments/confirm', { booking_id: selectedBooking.id, status: 'succeeded' }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post('/payments/confirm', { booking_id: selectedBooking.id, status: 'succeeded' });
       
       addToast(`Payment of ₹${data.amount} successful!`);
       setShowPaymentModal(false);
@@ -219,13 +197,10 @@ const Dashboard = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('/api/reviews', { 
+      await api.post('/reviews', { 
         booking_id: selectedBooking.id, 
         rating: review.rating, 
         comment: review.comment 
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       addToast('Thank you for your feedback!');
       setShowReviewModal(false);
@@ -346,11 +321,8 @@ const Dashboard = () => {
           onPay={(booking) => { setSelectedBooking(booking); setShowPaymentModal(true); }}
           onReview={(booking) => { setSelectedBooking(booking); setShowReviewModal(true); }}
           onViewHistory={async (id) => {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`/api/bookings/${id}/history`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            setHistory(res.data);
+            const { data } = await api.get(`/bookings/${id}/history`);
+            setHistory(data);
             setSelectedBooking({ id }); // Simplified for history modal
             setShowHistoryModal(true);
           }}
