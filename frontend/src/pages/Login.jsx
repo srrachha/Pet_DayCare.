@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, ArrowRight } from 'lucide-react';
+import api from '../api';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,10 +12,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+    const endpoint = isLogin ? '/auth/login' : '/auth/register';
     
     try {
-      const { data } = await axios.post(endpoint, formData);
+      const { data } = await api.post(endpoint, formData);
       if (isLogin) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));

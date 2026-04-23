@@ -6,6 +6,7 @@ import PetList from '../components/PetList';
 import BookingList from '../components/BookingList';
 import AdminPanel from '../components/AdminPanel';
 import MessageCenter from '../components/MessageCenter';
+import api from '../api';
 
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -59,12 +60,9 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
-      
       const [petsRes, bookingsRes] = await Promise.all([
-        axios.get('/api/pets', { headers }),
-        axios.get('/api/bookings', { headers })
+        api.get('/pets'),
+        api.get('/bookings')
       ]);
       
       setPets(petsRes.data);
@@ -84,10 +82,7 @@ const Dashboard = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('/api/pets', newPet, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post('/pets', newPet);
       addToast('New pet profile added successfully!');
       setShowPetModal(false);
       setNewPet({ name: '', breed: '', age: '', special_instructions: '', vaccination_status: 'Missing', vaccination_expiry: '' });

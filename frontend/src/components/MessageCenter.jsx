@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { Send, User, MessageSquare, X } from 'lucide-react';
+import api from '../api';
 
 const MessageCenter = ({ currentUser, isAdmin }) => {
   const [conversations, setConversations] = useState([]);
@@ -32,14 +30,8 @@ const MessageCenter = ({ currentUser, isAdmin }) => {
 
   const fetchConversations = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('/api/messages', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/messages');
       setConversations(res.data);
-      
-      // If admin, and no conversation selected, maybe show all users?
-      // For now, just show who we have messages with
     } catch (err) {
       console.error('Error fetching conversations', err);
     }
@@ -47,10 +39,7 @@ const MessageCenter = ({ currentUser, isAdmin }) => {
 
   const fetchMessages = async (userId) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`/api/messages/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/messages/${userId}`);
       setMessages(res.data);
     } catch (err) {
       console.error('Error fetching messages', err);
@@ -62,12 +51,9 @@ const MessageCenter = ({ currentUser, isAdmin }) => {
     if (!newMessage.trim() || !selectedUser) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.post('/api/messages', {
+      const res = await api.post('/messages', {
         receiver_id: selectedUser.id,
         message: newMessage
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       setMessages([...messages, res.data]);
       setNewMessage('');

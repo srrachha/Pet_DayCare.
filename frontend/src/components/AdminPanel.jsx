@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Users, Trash2, DollarSign, Activity, ShieldAlert, UserCheck, UserX } from 'lucide-react';
+import api from '../api';
 
 const AdminPanel = ({ addToast }) => {
   const [users, setUsers] = useState([]);
@@ -9,9 +7,6 @@ const AdminPanel = ({ addToast }) => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('users');
 
-  const token = localStorage.getItem('token');
-  const headers = { Authorization: `Bearer ${token}` };
-
   useEffect(() => {
     fetchAll();
   }, []);
@@ -19,9 +14,9 @@ const AdminPanel = ({ addToast }) => {
   const fetchAll = async () => {
     try {
       const [usersRes, revenueRes, activityRes] = await Promise.all([
-        axios.get('/api/admin/users', { headers }),
-        axios.get('/api/admin/revenue', { headers }),
-        axios.get('/api/admin/activity', { headers })
+        api.get('/admin/users'),
+        api.get('/admin/revenue'),
+        api.get('/admin/activity')
       ]);
       setUsers(usersRes.data);
       setRevenue(revenueRes.data);
@@ -36,7 +31,7 @@ const AdminPanel = ({ addToast }) => {
   const handleDeleteUser = async (id, username) => {
     if (!window.confirm(`Remove user "${username}" and all their data?`)) return;
     try {
-      await axios.delete(`/api/admin/users/${id}`, { headers });
+      await api.delete(`/admin/users/${id}`);
       addToast?.(`User "${username}" removed`);
       fetchAll();
     } catch (err) {
